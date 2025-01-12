@@ -1,25 +1,22 @@
 import csv
-import os
 
-# Define paths
-base_path = '/Users/Rebin/Documents/Wallapper_Group_Website/To Github/pdf'
-csv_file_path = os.path.join(base_path, 'file_mapping.csv')
+# File paths
+main_csv_path = '/Users/Rebin/Documents/Wallapper_Group_Website/To Github/pdf/file_mapping.csv'
 
-# Read the CSV file and add SVG links
-updated_rows = []
-with open(csv_file_path, mode='r', newline='') as csvfile:
-    reader = csv.DictReader(csvfile)
-    headers = reader.fieldnames + ['svg_path']  # Add a new 'svg_path' column
-    for row in reader:
-        pdf_path = row['pdf_path']  # Use 'pdf_path' as the column name
-        svg_path = pdf_path.replace('.pdf', '.svg')
-        row['svg_path'] = svg_path
-        updated_rows.append(row)
+# Read the main CSV
+with open(main_csv_path, mode='r', newline='') as main_csv:
+    reader = csv.reader(main_csv)
+    headers = next(reader)
+    main_data = list(reader)
 
-# Write the updated rows back to the CSV
-with open(csv_file_path, mode='w', newline='') as csvfile:
-    writer = csv.DictWriter(csvfile, fieldnames=headers)
-    writer.writeheader()
-    writer.writerows(updated_rows)
+# Write updated data back to the main CSV
+with open(main_csv_path, mode='w', newline='') as main_csv:
+    writer = csv.writer(main_csv)
+    writer.writerow(headers)
+    for row in main_data:
+        # Remove '@' from github_pdf_url and github_csv_url
+        row[-2] = row[-2].lstrip('@')  # github_pdf_url
+        row[-1] = row[-1].lstrip('@')  # github_csv_url
+        writer.writerow(row)
 
-print("CSV file updated to include SVG paths.") 
+print("Removed '@' from github_pdf_url and github_csv_url columns.") 
